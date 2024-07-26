@@ -43,6 +43,7 @@ export default function Home() {
   const [restrictedLetter1, setRestrictedLetter1] = useState('');
   const [restrictedLetter2, setRestrictedLetter2] = useState('');
   const [currentScore, setCurrentScore] = useState(0);
+  const [highestScore, setHighestScore] = useState(0);
 
   const removeWorms = (password, count) => {
     let newPassword = password;
@@ -90,6 +91,18 @@ export default function Home() {
       })
       .catch(error => {
         console.error('Error fetching irk:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/get-score')
+      .then(response => response.json())
+      .then(data => {
+        console.log('score fetched:', data);
+        setHighestScore(data);
+      })
+      .catch(error => {
+        console.error('Error fetching score:', error);
       });
   }, []);
 
@@ -156,7 +169,7 @@ export default function Home() {
     let intervalId;
 
     const checkRules = async () => {
-      await checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, isBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount);
+      await checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, highestScore, setHighestScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, isBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount);
       if (prevCountrule !== countrule) {
         prevCountrule = countrule;
       } else {
@@ -267,6 +280,10 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-2">Final Score</h2>
           <p className="text-xl font-bold">{currentScore}</p>
           </div>
+          <div className='bg-yellow-200 p-1 px-10 rounded border border-yellow-500 text-black w-fit'>
+            <h2 className="text-2xl font-bold mb-2">Highest Score</h2>
+            <p className="text-xl font-bold">{highestScore.score}</p>
+        </div>
           </div>
         ) :isGameOver ? (
           <div className="bg-red-100 p-4 rounded border border-red-500 text-black w-[600px]">

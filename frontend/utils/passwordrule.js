@@ -5,7 +5,7 @@ import {containKMP} from './KMP.js';
 import {containBM} from './BM.js';
 import axios from 'axios';
 
-export async function checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, Rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, IsBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount) {    
+export async function checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, Rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, highestScore, setHighestScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, IsBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount) {    
     let check = true;
     for(let i=1; i <= countrule; i++){
 
@@ -264,7 +264,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (containBM(password,captchaMatch.text_captcha)) {
                 setRule12(true);
             } else {
-                if (containBM(password, "cheat")) {
+                if (password.includes("cheat")) {
                     setPassword(password.replace("cheat", captchaMatch.text_captcha));
                 }
                 else{
@@ -295,6 +295,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             } else {
                 if (containBM(password, "cheat")) {
                     setPassword(password.replace("cheat", "2024"));
+                    console.log("masuk");
                 }
                 else{
                     setRule13(false);
@@ -334,6 +335,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
                 const passwordLower = password.toLowerCase();
                 let letter1 = '';
                 let letter2 = '';
+                console.log("masuk")
     
                 for (let char of alphabet) {
                     if (!containBM(passwordLower,char)) {
@@ -513,6 +515,14 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
         if(i === 21){
             if (check){
                 setWin(true);
+                try {
+                    await axios.post('http://127.0.0.1:5000/update-score', { score: currentScore + 100 });
+                    if (currentScore + 100 > highestScore) {
+                        setHighestScore(currentScore + 100);
+                    }
+                } catch (error) {
+                    console.error('Failed to send score to backend:', error);
+                }
             }
             else{
                 check = false;
