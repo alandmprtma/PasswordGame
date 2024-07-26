@@ -42,6 +42,7 @@ export default function Home() {
   const [isFeeding, setIsFeeding] = useState(false);
   const [restrictedLetter1, setRestrictedLetter1] = useState('');
   const [restrictedLetter2, setRestrictedLetter2] = useState('');
+  const [currentScore, setCurrentScore] = useState(0);
 
   const removeWorms = (password, count) => {
     let newPassword = password;
@@ -60,7 +61,7 @@ export default function Home() {
     fetch('http://127.0.0.1:5000/country')
       .then(response => response.json())
       .then(data => {
-        console.log('Countries fetched:', data); // Pastikan data diterima dengan benar
+        console.log('Countries fetched:', data);
         setCountries(data);
       })
       .catch(error => {
@@ -72,7 +73,7 @@ export default function Home() {
     fetch('http://127.0.0.1:5000/textcaptcha')
       .then(response => response.json())
       .then(data => {
-        console.log('captcha fetched:', data); // Pastikan data diterima dengan benar
+        console.log('captcha fetched:', data); 
         setCaptcha(data);
       })
       .catch(error => {
@@ -84,13 +85,34 @@ export default function Home() {
     fetch('http://127.0.0.1:5000/irk')
       .then(response => response.json())
       .then(data => {
-        console.log('irk fetched:', data); // Pastikan data diterima dengan benar
+        console.log('irk fetched:', data);
         setIRK(data);
       })
       .catch(error => {
         console.error('Error fetching irk:', error);
       });
   }, []);
+
+
+  useEffect(() => {
+    let scoreInterval;
+  
+    if (!isGameOver && !win) {
+      scoreInterval = setInterval(() => {
+        setCurrentScore(prevScore => {
+          const newScore = prevScore - 10;
+          return newScore < 0 ? 0 : newScore; // Pastikan skor tidak negatif
+        });
+      }, 8000); // 8 detik
+    }
+  
+    return () => {
+      if (scoreInterval) {
+        clearInterval(scoreInterval); // Bersihkan interval saat komponen unmount
+      }
+    };
+  }, [isGameOver, win]); // Tambahkan `isGameOver` dan `win` ke dalam dependensi
+
 
   useEffect(() => {
     let wormInterval;
@@ -134,16 +156,21 @@ export default function Home() {
     let intervalId;
 
     const checkRules = async () => {
-      await checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, restrictedLetter1, restrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, isBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount);
+      await checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, isBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount);
       if (prevCountrule !== countrule) {
         prevCountrule = countrule;
       } else {
         if(countrule === 8 && !checkBendera) {
           console.log(idBendera);
           // Memasukan tiga bilangan bulat acak antara 1 dan 10 ke dalam idBendera menggunakan setIdBendera
-          const randomIds = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10) + 1);
+          const randomIdsSet = new Set();
+          while (randomIdsSet.size < 3) {
+              randomIdsSet.add(Math.floor(Math.random() * 10) + 1);
+          }
+
+          const randomIds = Array.from(randomIdsSet);
           setIdBendera(randomIds);
-          console.log(idBendera);
+          console.log(randomIds);
           setCheckBendera(true);
         }
         clearInterval(intervalId);
@@ -216,19 +243,30 @@ export default function Home() {
         <title>The Password Game</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main className="flex flex-col items-center w-full flex-1 px-20 text-center">
+      {!win && (
+        <div className='bg-violet-200 p-1 px-10 rounded border border-violet-500 text-black w-fit mb-[25px]'>
+          <h2 className="text-2xl font-bold mb-2">Current Score</h2>
+          <p className="text-xl font-bold">{currentScore}</p>
+        </div>
+      )}
         <h1 className="text-4xl font-bold mb-8">
           The Password Game
         </h1>
       
         {win ? (
+          <div className='flex flex-col items-center'>
           <div className='bg-green-100 p-4 rounded border border-green-500 text-black w-[600px]'>
             <h2 className="text-2xl font-bold mb-2">Congratulations! You have won the game!</h2>
-            <p className="text-xl font-bold mb-4">Game Score</p>
-            <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-blue-100 border-blue-500 text-black rounded">
+            <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-blue-100 border-blue-500 font-semibold text-black rounded">
               Restart Game
             </button>
+          </div>
+          <img src="/trophy.png" alt="Logo" className=" w-[300px]" />
+          <div className='bg-violet-200 p-1 px-10 rounded border border-violet-500 text-black w-fit mb-[25px]'>
+          <h2 className="text-2xl font-bold mb-2">Final Score</h2>
+          <p className="text-xl font-bold">{currentScore}</p>
+          </div>
           </div>
         ) :isGameOver ? (
           <div className="bg-red-100 p-4 rounded border border-red-500 text-black w-[600px]">

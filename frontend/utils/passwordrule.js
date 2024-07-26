@@ -1,9 +1,11 @@
 import { value, romanToDecimal } from './romantodecimal.js';
 import {isPrime} from './prime.js';
 import {getCurrentTimeFromAPI} from './currentTime.js';
+import {containKMP} from './KMP.js';
+import {containBM} from './BM.js';
 import axios from 'axios';
 
-export async function checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, Rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, restrictedLetter1, restrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, IsBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount) {
+export async function checkPasswordRules(countrule, setCountrule, password, setPassword, setRule1, setRule2, setRule3, setRule4, setRule5, setRule6, setRule7, setRule8, setRule9, setRule10, setRule11, Rule11, setRule12, setRule13, setRule14, setRule15, setRule16, setRule17, setRule18, setRule19, setRule20, setCurrentScore, currentScore, restrictedLetter1, restrictedLetter2, setRestrictedLetter1, setRestrictedLetter2, setIsGameOver, setWin, idBendera, countries, idCaptcha, captcha, IRK, setIsBurning, IsBurning, firstBurn, setFirstBurn, setDigitPercentage, setCountdownFire, countdownFire, setWormCount) {    
     let check = true;
     for(let i=1; i <= countrule; i++){
 
@@ -22,8 +24,13 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (/\d/.test(password)) {
                 setRule2(true);
             } else {
-                setRule2(false);
-                check = false;
+                if (containKMP(password, "cheat")){
+                    setPassword(password.replace("cheat", "1"));
+                }
+                else{
+                    setRule2(false);
+                    check = false;
+                }
             }
         }
 
@@ -32,8 +39,13 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (/[A-Z]/.test(password)) {
                 setRule3(true);
             } else {
-                setRule3(false);
-                check = false;
+                if (containKMP(password, "cheat")){
+                    setPassword(password.replace("cheat", "A"));
+                }
+                else{
+                    setRule3(false);
+                    check = false;
+                }
             }
         }
 
@@ -42,23 +54,63 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
                 setRule4(true);
             } else {
-                setRule4(false);
-                check = false;
+                if (containKMP(password, "cheat")){
+                    setPassword(password.replace("cheat", "!"));
+                }
+                else{
+                    setRule4(false);
+                    check = false;
+                }
             }
         }
 
         // Rule 5: Digits must add up to 25
         if (i === 5) {
-            const digitSum = password
-                .split('')
-                .filter(char => /\d/.test(char))
-                .reduce((sum, digit) => sum + parseInt(digit), 0);
+            // const digitSum = password
+            //     .split('')
+            //     .filter(char => /\d/.test(char))
+            //     .reduce((sum, digit) => sum + parseInt(digit), 0);
+
+            const digitsInPassword = password.split('').filter(char => /\d/.test(char));
+            const digitSum = digitsInPassword.reduce((sum, digit) => sum + parseInt(digit), 0);
 
             if (digitSum === 25) {
                 setRule5(true);
             } else {
-                setRule5(false);
-                check = false;
+                if (containKMP(password, "cheat")) {
+                    let newPassword = password;
+        
+                    // Hitung jumlah digit yang perlu diubah
+                    let digitsNeeded = 25 - digitSum;
+        
+                    if (digitsNeeded > 0) {
+                        // Menambahkan digit jika kurang dari 25
+                        let additionalDigits = '';
+                        while (digitsNeeded > 0) {
+                            if (digitsNeeded >= 9) {
+                                additionalDigits += '9';
+                                digitsNeeded -= 9;
+                            } else {
+                                additionalDigits += digitsNeeded.toString();
+                                digitsNeeded = 0;
+                            }
+                        }
+                        newPassword = newPassword.replace("cheat", additionalDigits);
+                    } else if (digitsNeeded < 0) {
+                        // Mengurangi digit jika lebih dari 25
+                        const digitsToRemove = -digitsNeeded;
+                        const digitsToKeep = digitsInPassword.slice(0, digitsInPassword.length - digitsToRemove);
+                        newPassword = newPassword.split('').filter(char => !/\d/.test(char))
+                                                .concat(digitsToKeep)
+                                                .join('');
+                    }
+        
+                    setPassword(newPassword);
+                    setRule5(true); // Anggap cheat sudah memperbaiki password
+                } else {
+                    setRule5(false);
+                    check = false;
+                }
             }
         }
 
@@ -66,22 +118,32 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
         if (i === 6) {
             const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
             const lowerCasePassword = password.toLowerCase();
-            if (months.some(month => lowerCasePassword.includes(month))) {
+            if (months.some(month => containBM(lowerCasePassword, month))) {
                 setRule6(true);
             } else {
-                setRule6(false);
-                check = false;
+                if (containKMP(password, "cheat")) {
+                    setPassword(password.replace("cheat", "january"));
+                }
+                else{
+                    setRule6(false);
+                    check = false;
+                }
             }
         }
 
         // Rule 7: Password must include a Roman numeral
         if (i === 7) {
             const romanNumerals = ["I", "V", "X", "L", "C", "D", "M"];
-            if (romanNumerals.some(numeral => password.includes(numeral))) {
+            if (romanNumerals.some(numeral => containKMP(password, numeral))) {
                 setRule7(true);
             } else {
-                setRule7(false);
-                check = false;
+                if (containKMP(password, "cheat")) {
+                    setPassword(password.replace("cheat", "I"));
+                }
+                else{
+                    setRule7(false);
+                    check = false;
+                }
             }
         }
 
@@ -90,14 +152,26 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             const lowerCasePassword = password.toLowerCase();
             const countryMatch = idBendera.some(id => {
                 const country = countries.find(country => country.id === id);
-                return country && lowerCasePassword.includes(country.nama_negara.toLowerCase());
+                return country && containKMP(lowerCasePassword, country.nama_negara.toLowerCase());
             });
 
             if (countryMatch) {
                 setRule8(true);
             } else {
-                setRule8(false);
-                check = false;
+                if (containKMP(password, "cheat")) {
+                    // Ambil nama negara dari salah satu idBendera
+                    const countryToUse = countries.find(country => country.id === idBendera[0]);
+                    if (countryToUse) {
+                        const countryName = countryToUse.nama_negara;
+                        // Ganti "cheat" dengan nama negara
+                        const newPassword = password.replace("cheat", countryName);
+                        setPassword(newPassword);
+                    }
+                }
+                else {
+                    setRule8(false);
+                    check = false;
+                }
             }
         }
         // Rule 9: Roman numerals must multiply to 35
@@ -120,33 +194,49 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (isValid) {
                 setRule9(true);
             } else {
-                setRule9(false);
-                check = false;
+                if (containKMP(password, "cheat")) {
+                    setPassword(password.replace("cheat", "XXXV"));
+                }
+                else{
+                    setRule9(false);
+                    check = false;
+                }
             }
         }
 
         // Rule 10: Password is on fire
         if (i === 10 && countrule >= 10) {
-            setCountdownFire(countdownFire+1);
+            setCountdownFire(countdownFire + 1);
+            
             if ((countdownFire >= 15 || countrule === 10) && !IsBurning) {
-              setIsBurning(true);
-              setRule10(false);
-              setCountdownFire(0);
-            }
-            else{
+                setIsBurning(true);
+                setRule10(false);
+                setCountdownFire(0);
+            } else {
                 if (firstBurn && IsBurning) {
                     setFirstBurn(false);
-                } else if (!password.includes('🔥') && IsBurning) {
+                } else if (!containKMP(password, '🔥') && IsBurning) {
                     setIsBurning(false);
                     setRule10(true);
                 }
             }
-            console.log(countrule)
-            console.log(countdownFire)
+        
+            // Implementasi cheat
+            if (containKMP(password, "cheat")) {
+                // Ganti "cheat" dengan password tanpa emoji api
+                const newPassword = password.replace(/🔥/g, '').replace("cheat", '');
+                setPassword(newPassword);
+                setIsBurning(false);
+                setRule10(true); // Asumsikan cheat sudah memperbaiki password
+                setCountdownFire(0);
+            }
+        
+            console.log(countrule);
+            console.log(countdownFire);
         }
 
         if (i === 11) {
-            if (password.includes('🥚')) {
+            if (containBM(password, '🥚')) {
               setRule11(true);
             }
             else if (Rule11  && countrule < 14) {
@@ -157,20 +247,30 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
               {
                 setRule11(true);
               }
-              else{  
-                setRule11(false);
-                check = false;
+              else{
+                if (containBM(password, 'cheat')) {
+                    setPassword(password.replace("cheat", "🥚"));
+                }
+                else{
+                    setRule11(false);
+                    check = false;
+                }
               }
             }
           }
           if (i === 12) {
             const captchaMatch = captcha.find(c => c.id === idCaptcha);
             console.log(captchaMatch)
-            if (password.includes(captchaMatch.text_captcha)) {
+            if (containBM(password,captchaMatch.text_captcha)) {
                 setRule12(true);
             } else {
-                setRule12(false);
-                check = false;
+                if (containBM(password, "cheat")) {
+                    setPassword(password.replace("cheat", captchaMatch.text_captcha));
+                }
+                else{
+                    setRule12(false);
+                    check = false;
+                }
             }
           }
           if (i === 13) {
@@ -193,13 +293,23 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (isLeapYear) {
                 setRule13(true);
             } else {
-                setRule13(false);
-                check = false;
+                if (containBM(password, "cheat")) {
+                    setPassword(password.replace("cheat", "2024"));
+                }
+                else{
+                    setRule13(false);
+                    check = false;
+                }
             }
         }
         if (i === 14) {
             const initialWormCount = (password.match(/🐛/g) || []).length;
             setWormCount(initialWormCount);
+            if (containBM(password, "cheat") && initialWormCount <= 5) {
+                const updatedPassword = password.replace("cheat", "🐛🐛🐛🐛🐛");
+                setPassword(updatedPassword);
+                setRule14(true);
+            }
             if (countrule === 14){
                 const updatedPassword = password.replace(/🥚/g, '🐔');
                 setPassword(updatedPassword);
@@ -218,22 +328,59 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
           if(restrictedLetter1.length != 0 && restrictedLetter2.length != 0){
             setRule15(true);
           } else {
-            setRule15(false);
-            check = false;
+            if (containBM(password, "cheat")) {
+                // Temukan dua huruf yang tidak ada dalam password
+                const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+                const passwordLower = password.toLowerCase();
+                let letter1 = '';
+                let letter2 = '';
+    
+                for (let char of alphabet) {
+                    if (!containBM(passwordLower,char)) {
+                        if (!letter1) {
+                            letter1 = char;
+                        } else if (!letter2) {
+                            letter2 = char;
+                            break;
+                        }
+                    }
+                }
+    
+                if (letter1 && letter2) {
+                    // Ganti "cheat" dengan string kosong
+                    const newPassword = password.replace("cheat", '');
+                    setPassword(newPassword);
+    
+                    // Atur restrictedLetter1 dan restrictedLetter2
+                    setRestrictedLetter1(letter1);
+                    setRestrictedLetter2(letter2);
+                    setRule15(true);
+                } else {
+                    setRule15(false);
+                    check = false;
+                }
+            } else {
+                setRule15(false);
+                check = false;
+            }
           }
         }
         if (i === 16) {
             for (let i = 1; i <= 3; i++) {
                 const irk = IRK.find(c => c.id === i);
-                let masuk = false;
-                if (password.includes(irk.text_irk)) {
+                if (containBM(password,irk.text_irk)) {
                     setRule16(true);
                     break;
                 }
                 else 
                 {
-                    setRule16(false);
-                    check = false;
+                    if (containBM(password,"cheat")) {
+                        setPassword(password.replace("cheat", "I want IRK"));
+                    }
+                    else{
+                        setRule16(false);
+                        check = false;
+                    }
                 }
             }
         }
@@ -245,18 +392,64 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (digitPercentage >= 10) {
               setRule17(true);
             } else {
-              setRule17(false);
-              check = false;
+                if (containBM(password, "cheat")) {
+                    // Hitung jumlah digit yang diperlukan untuk mencapai 10%
+                    const requiredDigitsCount = Math.ceil((0.10 * totalLength - digitCount) / (1 - 0.10));
+                    let digitsToAdd = '';
+                    
+                    // Tambahkan digit yang diperlukan
+                    for (let j = 0; j < requiredDigitsCount; j++) {
+                        digitsToAdd += '0'; // Menggunakan angka 9
+                    }
+                    
+                    // Ganti "cheat" dengan angka-angka yang diperlukan
+                    const newPassword = password.replace("cheat", digitsToAdd);
+                    setPassword(newPassword);
+                    
+                    // Hitung ulang persentase digit
+                    const newTotalLength = newPassword.length;
+                    const newDigitCount = newPassword.split('').filter(char => /\d/.test(char)).length;
+                    const newDigitPercentage = ((newDigitCount / newTotalLength) * 100).toFixed(2);
+                    setDigitPercentage(newDigitPercentage);
+                    
+                    if (newDigitPercentage >= 10) {
+                        setRule17(true);
+                    } else {
+                        setRule17(false);
+                        check = false;
+                    }
+                } else {
+                    setRule17(false);
+                    check = false;
+                }
             }
           }
           if (i === 18) {
             const passwordLength = password.length.toString();
       
-            if (password.includes(passwordLength)) {
+            if (containBM(password, passwordLength)) {
               setRule18(true);
             } else {
-              setRule18(false);
-              check = false;
+                if (containBM(password, "cheat")) {
+                    // Ganti "cheat" dengan panjang password setelah penggantian
+                    const cheatLength = "cheat".length;
+                    const newPasswordLength = password.length - cheatLength + passwordLength.length;
+                    const newPasswordLengthStr = newPasswordLength.toString();
+        
+                    const newPassword = password.replace("cheat", newPasswordLengthStr);
+                    setPassword(newPassword);
+        
+                    // Cek ulang apakah panjang password sekarang termasuk dalam password
+                    if (containBM(newPassword,newPasswordLengthStr)) {
+                        setRule18(true);
+                    } else {
+                        setRule18(false);
+                        check = false;
+                    }
+                } else {
+                    setRule18(false);
+                    check = false;
+                }
             }
           }
         // Rule 19: The length of your password must be a prime number
@@ -265,10 +458,34 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             
             if (isPrime(passwordLength)) {
                 console.log("masuk")
-            setRule19(true);
+                setRule19(true);
             } else {
-            setRule19(false);
-            check = false;
+                if (containBM(password, "cheat")) {
+                    let newPassword = password.replace("cheat", "");
+                    let newLength = newPassword.length;
+        
+                    // Tambahkan atau kurangi karakter untuk mencapai panjang prima
+                    while (!isPrime(newLength)) {
+                        if (newLength < 25) {
+                            newPassword += 'x'; // Tambahkan karakter untuk mencapai panjang prima
+                        } else {
+                            newPassword = newPassword.slice(0, -1); // Kurangi karakter untuk mencapai panjang prima
+                        }
+                        newLength = newPassword.length;
+                    }
+        
+                    // Atur password baru dan cek ulang panjangnya
+                    setPassword(newPassword);
+                    if (isPrime(newPassword.length)) {
+                        setRule19(true);
+                    } else {
+                        setRule19(false);
+                        check = false;
+                    }
+                } else {
+                    setRule19(false);
+                    check = false;
+                }
             }
         }
         if (i === 20) {
@@ -279,11 +496,17 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             }
             else{
                 console.log(currentTime)
-                if (password.includes(currentTime)) {
+                if ( containBM(password,currentTime)) {
                 setRule20(true);
                 } else {
-                setRule20(false);
-                check = false;
+                if (containBM(password, "cheat")) {
+                    const newPassword = password.replace("cheat", currentTime);
+                    setPassword(newPassword);
+                    setRule20(true);
+                } else {
+                    setRule20(false);
+                    check = false;
+                }
                 }
             }
           }
@@ -298,6 +521,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
     }
     if (check){
         setCountrule(countrule + 1);
+        setCurrentScore(currentScore+100);
     }
   }
 
