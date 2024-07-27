@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Head from 'next/head';
-import { checkPasswordRules } from '../../utils/passwordrule.js';
+import { checkPasswordRules } from '../../utils/passwordruleEasy.js';
 
 export default function Home() {
   const [password, setPassword] = useState('');
@@ -135,7 +135,7 @@ export default function Home() {
   
       wormInterval = setInterval(() => {
         setWormCount(prevWormCount => {
-          const newWormCount = prevWormCount - 2;
+          const newWormCount = prevWormCount - 1;
           if (newWormCount < 0) {
             setIsGameOver(true);
             setRule14(false);
@@ -145,7 +145,7 @@ export default function Home() {
         });
         
         // The state update happens here in the next render cycle
-        setPassword(prevPassword => removeWorms(prevPassword, 2));
+        setPassword(prevPassword => removeWorms(prevPassword, 1));
         
       }, 10000); // Every 10 seconds
   
@@ -234,7 +234,7 @@ export default function Home() {
                       return prevPassword;
                   }
               });
-          }, 3000); // Set your desired interval here
+          }, 5000); // Set your desired interval here
 
           return () => clearInterval(burnInterval);
       }
@@ -265,8 +265,8 @@ export default function Home() {
           <p className="text-xl font-bold">{currentScore}</p>
         </div>
       )}
-      <div className="flex text-2xl justify-start font-bold mb-2 text-blue-500 py-[3px] px-[12px] border-black border-[5px]">
-        <h2>NORMAL</h2>
+      <div className="flex text-2xl justify-start font-bold mb-2 text-green-500 py-[3px] px-[12px] border-black border-[5px]">
+        <h2>EASY</h2>
       </div>
         <h1 className="text-4xl font-bold mb-8">
           The Password Game
@@ -323,7 +323,7 @@ export default function Home() {
                 }`}
             >
               <h5 className="text-lg font-semibold">Rule 1</h5>
-              <p>Your password must be at least 5 characters.</p>
+              <p>Your password must be at least 3 characters.</p>
             </div>
           )}
 
@@ -365,7 +365,7 @@ export default function Home() {
                   }`}
               >
                 <h5 className="text-lg font-semibold">Rule 5</h5>
-                <p>Digits must add up to 25.</p>
+                <p>Digits must add up to 35.</p>
               </div>
             )}
             {countrule >= 6 && !isGameOver && !win && (
@@ -415,7 +415,7 @@ export default function Home() {
                   }`}
               >
                 <h5 className="text-lg font-semibold">Rule 9</h5>
-                <p>The Roman numerals in your password should multiply to 35.</p>
+                <p>The Roman numerals in your password should multiply to 20.</p>
               </div>
             )}
             {countrule >= 10 && !isGameOver && !win && (
@@ -479,7 +479,7 @@ export default function Home() {
               }`}
             >
               <h5 className="text-lg font-semibold">Rule 14</h5>
-              <p>🐔 Paul has hatched! Please don't forget to feed him. He eats 2 🐛 every 10 seconds.</p>
+              <p>🐔 Paul has hatched! Please don't forget to feed him. He eats 1 🐛 every 10 seconds.</p>
               {rule14 && (
                 <p>Current worm count: {wormCount}</p>
               )}
@@ -535,7 +535,7 @@ export default function Home() {
               }`}
             >
               <h5 className="text-lg font-semibold">Rule 17</h5>
-              <p>At least 10% of your password must be in digits</p>
+              <p>At least 5% of your password must be in digits</p>
               <p>Current digit percentage: {digitPercentage}%</p>
             </div>
           )}
