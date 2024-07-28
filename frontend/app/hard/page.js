@@ -265,8 +265,8 @@ export default function Home() {
           <p className="text-xl font-bold">{currentScore}</p>
         </div>
       )}
-      <div className="flex text-2xl justify-start font-bold mb-2 text-blue-500 py-[3px] px-[12px] border-black border-[5px]">
-        <h2>NORMAL</h2>
+      <div className="flex text-2xl justify-start font-bold mb-2 text-red-500 py-[3px] px-[12px] border-black border-[5px]">
+        <h2>HARD</h2>
       </div>
         <h1 className="text-4xl font-bold mb-8">
           The Password Game
