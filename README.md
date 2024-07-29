@@ -138,7 +138,30 @@ PasswordGame/
 4. Once you click the game difficulty mode that you desire, you can start the game and see the current score at the top side of the website.
 
 ## 📸 Screenshots
-
+<div align="center">
+  <img src="./home.png" alt="Home Page" width="250"/>
+  <p><i>Home Page</i></p>
+</div>
+<div align="center">
+  <img src="./easy.png" alt="Easy Mode" width="250"/>
+  <p><i>Easy Mode</i></p>
+</div>
+<div align="center">
+  <img src="./normal.png" alt="Normal Mode" width="250"/>
+  <p><i>Normal Mode</i></p>
+</div>
+<div align="center">
+  <img src="./hard.png" alt="Hard Mode" width="250"/>
+  <p><i>Hard Mode</i></p>
+</div>
+<div align="center">
+  <img src="./win.png" alt="Win Condition" width="250"/>
+  <p><i>Win Condition</i></p>
+</div>
+<div align="center">
+  <img src="./gameover.png" alt="Lose Condition" width="250"/>
+  <p><i>Lose Condition</i></p>
+</div>
 
 ## 📚 Reference
 - https://neal.fun/password-game/
