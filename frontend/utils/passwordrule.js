@@ -261,7 +261,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
           if (i === 12) {
             const captchaMatch = captcha.find(c => c.id === idCaptcha);
             console.log(captchaMatch)
-            if (containBM(password,captchaMatch.text_captcha)) {
+            if (password.includes(captchaMatch.text_captcha)) {
                 setRule12(true);
             } else {
                 if (password.includes("cheat")) {
@@ -293,7 +293,7 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
             if (isLeapYear) {
                 setRule13(true);
             } else {
-                if (containBM(password, "cheat")) {
+                if (containKMP(password, "cheat")) {
                     setPassword(password.replace("cheat", "2024"));
                     console.log("masuk");
                 }
@@ -429,10 +429,10 @@ export async function checkPasswordRules(countrule, setCountrule, password, setP
           if (i === 18) {
             const passwordLength = password.length.toString();
       
-            if (containBM(password, passwordLength)) {
+            if (password.includes(passwordLength)) {
               setRule18(true);
             } else {
-                if (containBM(password, "cheat")) {
+                if (password.includes("cheat")) {
                     // Ganti "cheat" dengan panjang password setelah penggantian
                     const cheatLength = "cheat".length;
                     const newPasswordLength = password.length - cheatLength + passwordLength.length;

@@ -285,7 +285,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-2">Final Score</h2>
           <p className="text-xl font-bold">{currentScore}</p>
           </div>
-          <div className='bg-yellow-200 p-1 px-10 rounded border border-yellow-500 text-black w-fit'>
+          <div className='bg-yellow-200 p-1 px-10 rounded mb-[20px] border border-yellow-500 text-black w-fit'>
             <h2 className="text-2xl font-bold mb-2">Highest Score</h2>
             <p className="text-xl font-bold">{highestScore.score}</p>
         </div>
