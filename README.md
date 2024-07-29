@@ -1,5 +1,5 @@
 # 🔐 The Password Game
-## Application Description
+## 📝 Application Description
 ### Overview
 My Password Game application is an engaging and challenging game designed to test users' skills in creating secure and compliant passwords. The game progressively introduces rules that the user's password must satisfy. Utilizing advanced pattern matching algorithms such as regex, Knuth-Morris-Pratt (KMP), and Boyer-Moore (BM), this game provides a comprehensive and educational experience in password creation.
 
@@ -38,7 +38,7 @@ My Password Game application is an engaging and challenging game designed to tes
 ### Winning and Losing Condition
 Players win by satisfying all 20 rules. They lose if they fail to meet the criteria of any rule, especially unique ones like the egg/chicken emoji conditions. This Password Game application is designed to provide an educational yet entertaining experience, helping users understand the importance of secure password practices while engaging in a fun challenge.
 
-## Tech Stacks
+## 💻 Tech Stacks
 ### Programming Language
 - Python
 - Javascript
@@ -57,13 +57,62 @@ Players win by satisfying all 20 rules. They lose if they fail to meet the crite
 - MySQL (MariaDB)
 - OS Environment Variables
 
-## Program Structure
+## 🗂️ Program Structure
+```bash
+PasswordGame/
+├── backend/
+│   ├── app.py
+│   ├── passwordgame.sql
+│   └── requirement.txt
+├── frontend/
+│   ├── .next/
+│   ├── app/
+│   │   ├── easy/
+│   │   │   └── page.js
+│   │   ├── hard/
+│   │   │   └── page.js
+│   │   ├── normal/
+│   │   │   └── page.js
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.js
+│   │   └── page.js
+│   ├── node_modules/
+│   ├── public/
+│   └── utils/
+│       ├── BM.js
+│       ├── currentTime.js
+│       ├── KMP.js
+│       ├── passwordrule.js
+│       ├── passwordruleEasy.js
+│       ├── passwordruleHard.js
+│       ├── prime.js
+│       └── romantodecimal.js
+└── README.md
+```
 
+## 🧙 Algorithms
+### Regular Expressions (Regex)
+- <b>Usage:</b> Regex is used to check for patterns in strings, such as the presence of numbers, uppercase letters, lowercase letters, or special characters in a password. 
+- <b>Reason:</b> Regex is very efficient and straightforward in checking for the presence or specific patterns in a string, making it ideal for validating simple rules in passwords.
 
-## Algorithms
-### 
+### Knuth-Morris-Pratt (KMP)
+- <b>Usage:</b> The KMP algorithm is used to check for the presence of a specific substring in a password, especially for rules such as the presence of the word "cheat".
+- <b>Reason:</b> KMP is an efficient string matching algorithm with a time complexity of O(n + m), where n is the length of the text and m is the length of the pattern. It avoids repeated searches, making it faster for repeated string matching.
 
-## Configuration Guide
+### Boyer-Moore (BM)
+- <b>Usage:</b> The BM algorithm is used for string searching, such as checking for the presence of months, Roman numerals, or CAPTCHA text in passwords.
+- <b>Reason:</b> BM is very efficient for string matching on large texts with an average time complexity of O(n/m), where n is the length of the text and m is the length of the pattern. This makes it ideal for searching long substrings.
+
+### Roman Numeral Conversion
+- <b>Usage:</b> The `romanToDecimal` function is used to convert Roman numerals in a password to decimal numbers. 
+- <b>Reason:</b> To check rules involving Roman numerals (such as the rule that Roman numerals must be multiples of 35), this conversion is necessary.
+
+### Prime Number Check
+- <b>Usage:</b> The `isPrime` function is used to check whether the password length is a prime number.
+- Reason: </b> The rule requires the password length to be a prime number, so an efficient function is needed to check primeness.
+
+## 🛠️ Configuration Guide
 ### Front-End Configuration
 1. Clone the repository to your local files. Access the repository [here](repository-link).
 2. Open the terminal and ensure that the directory is set to `PasswordGame/frontend`.
@@ -83,11 +132,19 @@ Players win by satisfying all 20 rules. They lose if they fail to meet the crite
 3. After the Python Programming Language is successfully installed, execute `pip install -r requirements.txt`.
 4. After dependencies are successfully installed, run the backend by executing `python app.py` on the terminal.
 
-## How To Run
+## 🏃‍♂️ How To Run
+1. Access The Password Game website page at http://localhost:3000.
+2. You can choose the game difficulty mode start from EASY, NORMAL, and HARD.
+4. Once you click the game difficulty mode that you desire, you can start the game and see the current score at the top side of the website.
 
-## Screenshots
+## 📸 Screenshots
 
 
 ## 📚 Reference
 - https://neal.fun/password-game/
 - https://informatika.stei.itb.ac.id/~rinaldi.munir/Stmik/2023-2024/stima23-24.htm#SlideKuliah
+- https://fakecaptcha.com/
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions
+- https://www.geeksforgeeks.org/kmp-algorithm-for-pattern-searching/
+- https://www.geeksforgeeks.org/boyer-moore-algorithm-for-pattern-searching/
+- https://www.geeksforgeeks.org/roman-number-to-integer/
